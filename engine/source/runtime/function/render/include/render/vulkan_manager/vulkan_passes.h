@@ -41,6 +41,20 @@ namespace Pilot
         void setupDescriptorSet();
     };
 
+    class PBloomPass : public PRenderPassBase
+    {
+    public:
+        void initialize(VkRenderPass render_pass, VkImageView input_attachment);
+        void draw();
+
+        void updateAfterFramebufferRecreate(VkImageView input_attachment);
+
+    private:
+        void setupDescriptorSetLayout();
+        void setupPipelines();
+        void setupDescriptorSet();
+    };
+
     class PUIPass : public PRenderPassBase
     {
     public:
