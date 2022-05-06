@@ -276,7 +276,7 @@ void Pilot::PVulkanContext::createInstance()
     // create m_vulkan_context._instance
     if (vkCreateInstance(&instance_create_info, nullptr, &_instance) != VK_SUCCESS)
     {
-        throw std::runtime_error("vk create instance");
+       throw std::runtime_error("vk create instance");
     }
 }
 
