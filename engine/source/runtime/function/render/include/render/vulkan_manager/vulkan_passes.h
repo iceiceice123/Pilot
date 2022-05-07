@@ -153,6 +153,7 @@ namespace Pilot
 
         void draw(PColorGradingPass& color_grading_pass,
                   PToneMappingPass&  tone_mapping_pass,
+                  PBloomPass&        bloom_pass,
                   PUIPass&           ui_pass,
                   PCombineUIPass&    combine_ui_pass,
                   uint32_t           current_swapchain_image_index,
@@ -161,6 +162,7 @@ namespace Pilot
         // legacy
         void drawForward(PColorGradingPass& color_grading_pass,
                          PToneMappingPass&  tone_mapping_pass,
+                         PBloomPass&        bloom_pass,
                          PUIPass&           ui_pass,
                          PCombineUIPass&    combine_ui_pass,
                          uint32_t           current_swapchain_image_index,

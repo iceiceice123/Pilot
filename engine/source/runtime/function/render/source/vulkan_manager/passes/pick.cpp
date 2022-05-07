@@ -97,7 +97,6 @@ namespace Pilot
         renderpass_create_info.pSubpasses      = &subpass;
         renderpass_create_info.dependencyCount = 0;
         renderpass_create_info.pDependencies   = NULL;
-
         if (vkCreateRenderPass(
                 m_p_vulkan_context->_device, &renderpass_create_info, nullptr, &_framebuffer.render_pass) != VK_SUCCESS)
         {
