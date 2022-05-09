@@ -31,7 +31,8 @@ namespace Pilot
         post_process_global_layout_input_attachment_binding.descriptorCount = 1;
         post_process_global_layout_input_attachment_binding.stageFlags      = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-        VkDescriptorSetLayoutBinding& post_process_global_layout_LUT_binding = post_process_global_layout_bindings[1];
+        VkDescriptorSetLayoutBinding& post_process_global_layout_LUT_binding = 
+            post_process_global_layout_bindings[1];
         post_process_global_layout_LUT_binding.binding                       = 1;
         post_process_global_layout_LUT_binding.descriptorType  = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
         post_process_global_layout_LUT_binding.descriptorCount = 1;
@@ -241,7 +242,8 @@ namespace Pilot
         post_process_descriptor_input_attachment_write_info.descriptorCount = 1;
         post_process_descriptor_input_attachment_write_info.pImageInfo = &post_process_per_frame_input_attachment_info;
 
-        VkWriteDescriptorSet& post_process_descriptor_LUT_write_info = post_process_descriptor_writes_info[1];
+        VkWriteDescriptorSet& post_process_descriptor_LUT_write_info = 
+            post_process_descriptor_writes_info[1];
         post_process_descriptor_LUT_write_info.sType                 = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         post_process_descriptor_LUT_write_info.pNext                 = NULL;
         post_process_descriptor_LUT_write_info.dstSet                = _descriptor_infos[0].descriptor_set;
