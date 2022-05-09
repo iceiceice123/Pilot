@@ -249,31 +249,31 @@ namespace Pilot
 
     void PBloomPass::draw()
     {
-        //if (m_render_config._enable_debug_untils_label)
-        //{
-        //    VkDebugUtilsLabelEXT label_info = {
-        //        VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT, NULL, "Bloom", {1.0f, 1.0f, 1.0f, 1.0f}};
-        //    m_p_vulkan_context->_vkCmdBeginDebugUtilsLabelEXT(m_command_info._current_command_buffer, &label_info);
-        //}
+        if (m_render_config._enable_debug_untils_label)
+        {
+            VkDebugUtilsLabelEXT label_info = {
+                VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT, NULL, "Bloom", {1.0f, 1.0f, 1.0f, 1.0f}};
+            m_p_vulkan_context->_vkCmdBeginDebugUtilsLabelEXT(m_command_info._current_command_buffer, &label_info);
+        }
 
-        //m_p_vulkan_context->_vkCmdBindPipeline(
-        //    m_command_info._current_command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _render_pipelines[0].pipeline);
-        //m_p_vulkan_context->_vkCmdSetViewport(m_command_info._current_command_buffer, 0, 1, &m_command_info._viewport);
-        //m_p_vulkan_context->_vkCmdSetScissor(m_command_info._current_command_buffer, 0, 1, &m_command_info._scissor);
-        //m_p_vulkan_context->_vkCmdBindDescriptorSets(m_command_info._current_command_buffer,
-        //                                             VK_PIPELINE_BIND_POINT_GRAPHICS,
-        //                                             _render_pipelines[0].layout,
-        //                                             0,
-        //                                             1,
-        //                                             &_descriptor_infos[0].descriptor_set,
-        //                                             0,
-        //                                             NULL);
+        m_p_vulkan_context->_vkCmdBindPipeline(
+            m_command_info._current_command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _render_pipelines[0].pipeline);
+        m_p_vulkan_context->_vkCmdSetViewport(m_command_info._current_command_buffer, 0, 1, &m_command_info._viewport);
+        m_p_vulkan_context->_vkCmdSetScissor(m_command_info._current_command_buffer, 0, 1, &m_command_info._scissor);
+        m_p_vulkan_context->_vkCmdBindDescriptorSets(m_command_info._current_command_buffer,
+                                                     VK_PIPELINE_BIND_POINT_GRAPHICS,
+                                                     _render_pipelines[0].layout,
+                                                     0,
+                                                     1,
+                                                     &_descriptor_infos[0].descriptor_set,
+                                                     0,
+                                                     NULL);
 
-        //vkCmdDraw(m_command_info._current_command_buffer, 3, 1, 0, 0);
+        vkCmdDraw(m_command_info._current_command_buffer, 3, 1, 0, 0);
 
-        //if (m_render_config._enable_debug_untils_label)
-        //{
-        //    m_p_vulkan_context->_vkCmdEndDebugUtilsLabelEXT(m_command_info._current_command_buffer);
-        //}
+        if (m_render_config._enable_debug_untils_label)
+        {
+            m_p_vulkan_context->_vkCmdEndDebugUtilsLabelEXT(m_command_info._current_command_buffer);
+        }
     }
 } // namespace Pilot
