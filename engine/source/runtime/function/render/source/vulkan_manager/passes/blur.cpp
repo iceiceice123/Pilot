@@ -13,14 +13,14 @@
 #include "runtime/function/render/include/render/vulkan_manager/vulkan_passes.h"
 #include "runtime/function/render/include/render/vulkan_manager/vulkan_util.h"
 
-#include <bloom_frag.h>
-#include <post_process_vert.h>
+#include <blur_frag.h>
+#include <blur_vert.h>
 #include <runtime/core/base/macro.h>
 
 
 namespace Pilot
 {
-    void PBloomPass::initialize(VkRenderPass render_pass, VkImageView input_attachment)
+    void PBlurPass::initialize(VkRenderPass render_pass, VkImageView input_attachment)
     {
         _framebuffer.render_pass = render_pass;
         setupDescriptorSetLayout();
@@ -29,7 +29,7 @@ namespace Pilot
         updateAfterFramebufferRecreate(input_attachment);
     }
 
-    void PBloomPass::setupDescriptorSetLayout()
+    void PBlurPass::setupDescriptorSetLayout()
     {
         _descriptor_infos.resize(1);
 
@@ -58,7 +58,7 @@ namespace Pilot
             throw std::runtime_error("create post process global layout");
         }
     }
-    void PBloomPass::setupPipelines()
+    void PBlurPass::setupPipelines()
     {
         _render_pipelines.resize(1);
 
@@ -76,8 +76,8 @@ namespace Pilot
         }
 
         VkShaderModule vert_shader_module =
-            PVulkanUtil::createShaderModule(m_p_vulkan_context->_device, POST_PROCESS_VERT);
-        VkShaderModule frag_shader_module = PVulkanUtil::createShaderModule(m_p_vulkan_context->_device, BLOOM_FRAG);
+            PVulkanUtil::createShaderModule(m_p_vulkan_context->_device, BLUR_VERT);
+        VkShaderModule frag_shader_module = PVulkanUtil::createShaderModule(m_p_vulkan_context->_device, BLUR_FRAG);
 
         VkPipelineShaderStageCreateInfo vert_pipeline_shader_stage_create_info {};
         vert_pipeline_shader_stage_create_info.sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -181,7 +181,7 @@ namespace Pilot
         pipelineInfo.pDepthStencilState  = &depth_stencil_create_info;
         pipelineInfo.layout              = _render_pipelines[0].layout;
         pipelineInfo.renderPass          = _framebuffer.render_pass;
-        pipelineInfo.subpass             = _main_camera_subpass_bloom;
+        pipelineInfo.subpass             = _main_camera_subpass_blur;
         pipelineInfo.basePipelineHandle  = VK_NULL_HANDLE;
         pipelineInfo.pDynamicState       = &dynamic_state_create_info;
 
@@ -198,7 +198,7 @@ namespace Pilot
         vkDestroyShaderModule(m_p_vulkan_context->_device, vert_shader_module, nullptr);
         vkDestroyShaderModule(m_p_vulkan_context->_device, frag_shader_module, nullptr);
     }
-    void PBloomPass::setupDescriptorSet()
+    void PBlurPass::setupDescriptorSet()
     {
         VkDescriptorSetAllocateInfo post_process_global_descriptor_set_alloc_info;
         post_process_global_descriptor_set_alloc_info.sType          = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -217,7 +217,7 @@ namespace Pilot
         }
     }
 
-    void PBloomPass::updateAfterFramebufferRecreate(VkImageView input_attachment)
+    void PBlurPass::updateAfterFramebufferRecreate(VkImageView input_attachment)
     {
         VkDescriptorImageInfo post_process_per_frame_input_attachment_info = {};
         post_process_per_frame_input_attachment_info.sampler =
@@ -246,12 +246,12 @@ namespace Pilot
                                NULL);
     }
 
-    void PBloomPass::draw()
+    void PBlurPass::draw()
     {
- /*       if (m_render_config._enable_debug_untils_label)
+        if (m_render_config._enable_debug_untils_label)
         {
             VkDebugUtilsLabelEXT label_info = {
-                VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT, NULL, "Bloom", {1.0f, 1.0f, 1.0f, 1.0f}};
+                VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT, NULL, "Blur", {1.0f, 1.0f, 1.0f, 1.0f}};
             m_p_vulkan_context->_vkCmdBeginDebugUtilsLabelEXT(m_command_info._current_command_buffer, &label_info);
         }
 
@@ -273,6 +273,6 @@ namespace Pilot
         if (m_render_config._enable_debug_untils_label)
         {
             m_p_vulkan_context->_vkCmdEndDebugUtilsLabelEXT(m_command_info._current_command_buffer);
-        }*/
+        }
     }
 } // namespace Pilot

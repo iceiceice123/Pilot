@@ -131,7 +131,7 @@ void Pilot::PVulkanManager::renderFrame(class Scene&                scene,
 
     m_main_camera_pass.draw(m_color_grading_pass,
                             m_tone_mapping_pass,
-                            m_bloom_pass,
+                            m_blur_pass,
                             m_ui_pass,
                             m_combine_ui_pass,
                             current_swapchain_image_index,
@@ -268,7 +268,7 @@ void Pilot::PVulkanManager::renderFrameForward(class Scene&                scene
 
     m_main_camera_pass.drawForward(m_color_grading_pass,
                                    m_tone_mapping_pass,
-                                   m_bloom_pass,
+                                   m_blur_pass,
                                    m_ui_pass,                                 
                                    m_combine_ui_pass,
                                    current_swapchain_image_index,

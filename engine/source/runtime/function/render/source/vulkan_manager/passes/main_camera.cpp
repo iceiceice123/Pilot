@@ -273,31 +273,31 @@ namespace Pilot
         color_grading_pass.preserveAttachmentCount = 0;
         color_grading_pass.pPreserveAttachments    = NULL;
 
-        VkAttachmentReference bloom_pass_input_attachment_reference {};
-        bloom_pass_input_attachment_reference.attachment     =
-            &backup_even_color_attachment_description - attachments;
-        bloom_pass_input_attachment_reference.layout     = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
-        VkAttachmentReference bloom_pass_color_attachment_reference {};
-        bloom_pass_color_attachment_reference.attachment     =
+        VkAttachmentReference blur_pass_input_attachment_reference {};
+        blur_pass_input_attachment_reference.attachment  =
             &backup_odd_color_attachment_description - attachments;
-        bloom_pass_color_attachment_reference.layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        blur_pass_input_attachment_reference.layout     = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-        VkSubpassDescription& bloom_pass           = subpasses[_main_camera_subpass_bloom];
-        bloom_pass.pipelineBindPoint               = VK_PIPELINE_BIND_POINT_GRAPHICS;
-        bloom_pass.inputAttachmentCount            = 1;
-        bloom_pass.pInputAttachments               = &bloom_pass_input_attachment_reference;
-        bloom_pass.colorAttachmentCount            = 1;
-        bloom_pass.pColorAttachments               = &bloom_pass_color_attachment_reference;
-        bloom_pass.pDepthStencilAttachment         = NULL;
-        bloom_pass.preserveAttachmentCount         = 0;
-        bloom_pass.pPreserveAttachments            = NULL;
+        VkAttachmentReference blur_pass_color_attachment_reference {};
+        blur_pass_color_attachment_reference.attachment  =
+            &backup_even_color_attachment_description - attachments;
+        blur_pass_color_attachment_reference.layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+        VkSubpassDescription& blur_pass            = subpasses[_main_camera_subpass_blur];
+        blur_pass.pipelineBindPoint                = VK_PIPELINE_BIND_POINT_GRAPHICS;
+        blur_pass.inputAttachmentCount             = 1;
+        blur_pass.pInputAttachments                = &blur_pass_input_attachment_reference;
+        blur_pass.colorAttachmentCount             = 1;
+        blur_pass.pColorAttachments                = &blur_pass_color_attachment_reference;
+        blur_pass.pDepthStencilAttachment          = NULL;
+        blur_pass.preserveAttachmentCount          = 0;
+        blur_pass.pPreserveAttachments             = NULL;
 
         VkAttachmentReference ui_pass_color_attachment_reference {};
-        ui_pass_color_attachment_reference.attachment = &backup_even_color_attachment_description - attachments;
+        ui_pass_color_attachment_reference.attachment = &backup_odd_color_attachment_description - attachments;
         ui_pass_color_attachment_reference.layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-        uint32_t ui_pass_preserve_attachment = &backup_odd_color_attachment_description - attachments;
+        uint32_t ui_pass_preserve_attachment = &backup_even_color_attachment_description - attachments;
 
         VkSubpassDescription& ui_pass   = subpasses[_main_camera_subpass_ui];
         ui_pass.pipelineBindPoint       = VK_PIPELINE_BIND_POINT_GRAPHICS;
@@ -400,7 +400,7 @@ namespace Pilot
 
         VkSubpassDependency& ui_pass_depend_on_color_grading_pass = dependencies[5];
         ui_pass_depend_on_color_grading_pass.srcSubpass           = _main_camera_subpass_color_grading;
-        ui_pass_depend_on_color_grading_pass.dstSubpass           = _main_camera_subpass_bloom;
+        ui_pass_depend_on_color_grading_pass.dstSubpass           = _main_camera_subpass_blur;
         ui_pass_depend_on_color_grading_pass.srcStageMask =
             VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
         ui_pass_depend_on_color_grading_pass.dstStageMask =
@@ -411,18 +411,18 @@ namespace Pilot
             VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_READ_BIT;
         ui_pass_depend_on_color_grading_pass.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 
-        VkSubpassDependency& ui_pass_depend_on_bloom_pass = dependencies[6];
-        ui_pass_depend_on_bloom_pass.srcSubpass           = _main_camera_subpass_bloom;
-        ui_pass_depend_on_bloom_pass.dstSubpass           = _main_camera_subpass_ui;
-        ui_pass_depend_on_bloom_pass.srcStageMask =
+        VkSubpassDependency& ui_pass_depend_on_blur_pass  = dependencies[6];
+        ui_pass_depend_on_blur_pass.srcSubpass           = _main_camera_subpass_blur;
+        ui_pass_depend_on_blur_pass.dstSubpass            = _main_camera_subpass_ui;
+        ui_pass_depend_on_blur_pass.srcStageMask =
             VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        ui_pass_depend_on_bloom_pass.dstStageMask =
+        ui_pass_depend_on_blur_pass.dstStageMask =
             VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        ui_pass_depend_on_bloom_pass.srcAccessMask =
+        ui_pass_depend_on_blur_pass.srcAccessMask =
             VK_ACCESS_SHADER_WRITE_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-        ui_pass_depend_on_bloom_pass.dstAccessMask   =
+        ui_pass_depend_on_blur_pass.dstAccessMask =
             VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_READ_BIT;
-        ui_pass_depend_on_bloom_pass.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+        ui_pass_depend_on_blur_pass.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 
         VkSubpassDependency& combine_ui_pass_depend_on_ui_pass = dependencies[7];
         combine_ui_pass_depend_on_ui_pass.srcSubpass           = _main_camera_subpass_ui;
@@ -1637,7 +1637,6 @@ namespace Pilot
             pipelineInfo.layout              = _render_pipelines[_render_pipeline_type_axis].layout;
             pipelineInfo.renderPass          = _framebuffer.render_pass;
             pipelineInfo.subpass             = _main_camera_subpass_ui;
-            //pipelineInfo.subpass             = _main_camera_subpass_bloom;
             pipelineInfo.basePipelineHandle  = VK_NULL_HANDLE;
             pipelineInfo.pDynamicState       = &dynamic_state_create_info;
 
@@ -2124,14 +2123,14 @@ namespace Pilot
     /// @brief draw function,we need to add pass in this part
     /// @param color_grading_pass 
     /// @param tone_mapping_pass 
-    /// @param bloom_pass 
+    /// @param blur_pass 
     /// @param ui_pass 
     /// @param combine_ui_pass 
     /// @param current_swapchain_image_index 
     /// @param ui_state 
     void PMainCameraPass::draw(PColorGradingPass& color_grading_pass,
                                PToneMappingPass&  tone_mapping_pass,
-                               PBloomPass&        bloom_pass,
+                               PBlurPass&         blur_pass,
                                PUIPass&           ui_pass,
                                PCombineUIPass&    combine_ui_pass,
                                uint32_t           current_swapchain_image_index,
@@ -2216,7 +2215,7 @@ namespace Pilot
 
         m_p_vulkan_context->_vkCmdNextSubpass(m_command_info._current_command_buffer, VK_SUBPASS_CONTENTS_INLINE);
 
-        bloom_pass.draw();
+        blur_pass.draw();
 
         m_p_vulkan_context->_vkCmdNextSubpass(m_command_info._current_command_buffer, VK_SUBPASS_CONTENTS_INLINE);
         VkClearAttachment clear_attachments[1];
@@ -2253,14 +2252,14 @@ namespace Pilot
     /// @brief draw forward function,we need to add pass in this part
     /// @param color_grading_pass
     /// @param tone_mapping_pass
-    /// @param bloom_pass
+    /// @param blur_pass
     /// @param ui_pass
     /// @param combine_ui_pass
     /// @param current_swapchain_image_index
     /// @param ui_state 
     void PMainCameraPass::drawForward(PColorGradingPass& color_grading_pass,
                                       PToneMappingPass&  tone_mapping_pass,
-                                      PBloomPass&        bloom_pass,
+                                      PBlurPass&         blur_pass,
                                       PUIPass&           ui_pass,
                                       PCombineUIPass&    combine_ui_pass,
                                       uint32_t           current_swapchain_image_index,
@@ -2319,7 +2318,7 @@ namespace Pilot
 
         m_p_vulkan_context->_vkCmdNextSubpass(m_command_info._current_command_buffer, VK_SUBPASS_CONTENTS_INLINE);
 
-        bloom_pass.draw();
+        blur_pass.draw();
         m_p_vulkan_context->_vkCmdNextSubpass(m_command_info._current_command_buffer, VK_SUBPASS_CONTENTS_INLINE);
 
         VkClearAttachment clear_attachments[1];
