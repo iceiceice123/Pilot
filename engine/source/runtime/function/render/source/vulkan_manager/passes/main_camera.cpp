@@ -275,12 +275,12 @@ namespace Pilot
 
         VkAttachmentReference bloom_pass_input_attachment_reference {};
         bloom_pass_input_attachment_reference.attachment     =
-            &backup_odd_color_attachment_description - attachments;
+            &backup_even_color_attachment_description - attachments;
         bloom_pass_input_attachment_reference.layout     = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
         VkAttachmentReference bloom_pass_color_attachment_reference {};
         bloom_pass_color_attachment_reference.attachment     =
-            &backup_even_color_attachment_description - attachments;
+            &backup_odd_color_attachment_description - attachments;
         bloom_pass_color_attachment_reference.layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
         VkSubpassDescription& bloom_pass           = subpasses[_main_camera_subpass_bloom];

@@ -26,7 +26,7 @@ namespace Pilot
         setupDescriptorSetLayout();
         setupPipelines();
         setupDescriptorSet();
-        //updateAfterFramebufferRecreate(input_attachment);
+        updateAfterFramebufferRecreate(input_attachment);
     }
 
     void PBloomPass::setupDescriptorSetLayout()
@@ -215,7 +215,6 @@ namespace Pilot
 
 
         }
-        LOG_INFO("1");
     }
 
     void PBloomPass::updateAfterFramebufferRecreate(VkImageView input_attachment)
@@ -249,7 +248,7 @@ namespace Pilot
 
     void PBloomPass::draw()
     {
-        if (m_render_config._enable_debug_untils_label)
+ /*       if (m_render_config._enable_debug_untils_label)
         {
             VkDebugUtilsLabelEXT label_info = {
                 VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT, NULL, "Bloom", {1.0f, 1.0f, 1.0f, 1.0f}};
@@ -274,6 +273,6 @@ namespace Pilot
         if (m_render_config._enable_debug_untils_label)
         {
             m_p_vulkan_context->_vkCmdEndDebugUtilsLabelEXT(m_command_info._current_command_buffer);
-        }
+        }*/
     }
 } // namespace Pilot
