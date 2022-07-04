@@ -33,7 +33,6 @@ namespace Pilot
        switch (m_state)
         {
             case States::_idle:
-                /**** [0] ****/
                 if (is_jumping)
                 {
                     m_state = States::_jump_start_from_idle;
@@ -48,7 +47,6 @@ namespace Pilot
                 {
                     m_state = States::_walk_run;
                 }
-                /**** [1] ****/
                 break;
             case States::_walk_run:
                 if (is_jumping)
